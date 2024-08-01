@@ -145,7 +145,6 @@ body::-webkit-scrollbar {
 .header {
   margin-bottom: 13px;
   position: relative;
-
   margin-bottom: 0;
 }
 
@@ -539,6 +538,7 @@ body::-webkit-scrollbar {
 
 /* CONTAINER */
 .container {
+  top: 100px;  
   margin: 0 12px;
   margin-top: 27px;
   margin-left: auto;
