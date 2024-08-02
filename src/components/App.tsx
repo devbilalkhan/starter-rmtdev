@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import Background from "./Background";
 import Container from "./Container";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header, { HeaderTop } from "./Header";
+import Logo from "./Logo";
+import BookmarksButton from "./BookmarksButton";
+import Searchform from "./SearchForm";
 
 function App() {
   const [jobItems, setJobItems] = useState([]);
-  const [searchText, setSearctText] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     if (!searchText) return;
@@ -29,7 +32,13 @@ function App() {
   return (
     <>
       <Background />
-      <Header searchText={searchText} setSearchText={setSearctText} />
+      <Header>
+        <HeaderTop>
+          <Logo />
+          <BookmarksButton />
+        </HeaderTop>
+        <Searchform searchText={searchText} setSearchText={setSearchText} />
+      </Header>
       <Container jobItems={jobItems} />
       <Footer />
     </>
