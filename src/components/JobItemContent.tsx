@@ -1,6 +1,10 @@
 import BookmarkIcon from "./BookmarkIcon";
 
-export default function JobItemContent() {
+type JobItemContentProps = {
+  activeId: number | null;
+}
+
+export default function JobItemContent({activeId}: JobItemContentProps) {
   return <EmptyJobContent />;
 
   return (

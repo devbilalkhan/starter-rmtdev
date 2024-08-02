@@ -6,11 +6,11 @@ type JobProps = {
 };
 
 export default function istItem({
-  job: { title, badgeLetter, company, daysAgo },
+  job: { id, title, badgeLetter, company, daysAgo },
 }: JobProps) {
   return (
     <li className="job-item">
-      <a className="job-item__link">
+      <a href={`#${id}`} className="job-item__link">
         <div className="job-item__badge">{badgeLetter}</div>
 
         <div className="job-item__middle">

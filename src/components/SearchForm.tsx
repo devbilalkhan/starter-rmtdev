@@ -1,4 +1,12 @@
-export default function Searchform({ searchText, setSearchText }) {
+type SearchformProps = {
+  searchText: string;
+  setSearchText: (value: string) => void;
+};
+
+export default function Searchform({
+  searchText,
+  setSearchText,
+}: SearchformProps) {
   //React.formEvent<HTMLformElement>
 
   const handleSearchJob = (e: React.ChangeEvent<HTMLInputElement>) => {

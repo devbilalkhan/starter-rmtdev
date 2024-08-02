@@ -30,3 +30,25 @@ export function useJobsItems(searchText:string){
   }, [searchText]);
   return [jobsSubList, isLoading] as const
 }
+
+
+export function useActiveId() {
+  const [activeId, setActiveId] = useState<number | null>(null);
+
+  // for any external events such capturing urls
+  useEffect(() => {
+    const handleChangeHash = () => {
+      // retrieve the the url with hash - check href in ListItem
+      // plus sign is to convert the str into number
+      setActiveId(+window.location.hash.slice(1));
+    };
+
+    window.addEventListener("hashchange", handleChangeHash);
+    handleChangeHash(); //loads on first mount also if id present
+    return () => {
+      window.removeEventListener("hashchange", handleChangeHash);
+    };
+  }, []);
+
+  return activeId
+}
