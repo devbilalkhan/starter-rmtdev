@@ -9,18 +9,18 @@ export default function istItem({
   job: { title, badgeLetter, company, daysAgo },
 }: JobProps) {
   return (
-    <li className="item">
-      <a className="item__link">
-        <div className="item__badge">{badgeLetter}</div>
+    <li className="job-item">
+      <a className="job-item__link">
+        <div className="job-item__badge">{badgeLetter}</div>
 
-        <div className="item__middle">
+        <div className="job-item__middle">
           <h3 className="third-heading">{title}</h3>
-          <p className="item__company">{company}</p>
+          <p className="job-item__company">{company}</p>
         </div>
 
-        <div className="item__right">
+        <div className="job-item__right">
           <BookmarkIcon />
-          <time className="item__time">{daysAgo} d</time>
+          <time className="job-item__time">{daysAgo} d</time>
         </div>
       </a>
     </li>
