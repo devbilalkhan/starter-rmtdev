@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { Job } from "../lib/type";
 
-export function useJobsItems(){
+export function useJobsItems(searchText:string){
 
-  const [jobItems, setJobItems] = useState([]);
-  const [searchText, setSearchText] = useState("");
+  const [jobItems, setJobItems] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const jobsSubList = jobItems.slice(0, 7);
 
   useEffect(() => {
     if (!searchText) return;
@@ -27,9 +28,5 @@ export function useJobsItems(){
     };
     fetchJobsList();
   }, [searchText]);
-  return {
-    jobItems, setJobItems, 
-    searchText, setSearchText, 
-    isLoading, setIsLoading
-  }
+  return [jobsSubList, isLoading] as const
 }
