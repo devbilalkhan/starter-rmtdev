@@ -16,7 +16,11 @@ import { useJobsItems } from "../hooks/hooks";
 
 function App() {
   const [searchText, setSearchText] = useState("");
-  const [jobsItems, isLoading, totalJobs] = useJobsItems(searchText);
+  const {
+    jobsSubList: jobsItems,
+    isLoading,
+    totalJobs,
+  } = useJobsItems(searchText);
 
   return (
     <>

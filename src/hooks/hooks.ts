@@ -31,7 +31,7 @@ export function useJobsItems(searchText:string){
     };
     fetchJobsList();
   }, [searchText]);
-  return [jobsSubList, isLoading, totalJobs] as const
+  return {jobsSubList, isLoading, totalJobs} as const
 }
 
 
