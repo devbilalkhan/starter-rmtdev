@@ -8,6 +8,8 @@ export function useJobsItems(searchText:string){
   const [isLoading, setIsLoading] = useState(false);
   const jobsSubList = jobItems.slice(0, 7);
 
+  const totalJobs = jobItems.length
+
   useEffect(() => {
     if (!searchText) return;
     const fetchJobsList = async () => {
@@ -29,7 +31,7 @@ export function useJobsItems(searchText:string){
     };
     fetchJobsList();
   }, [searchText]);
-  return [jobsSubList, isLoading] as const
+  return [jobsSubList, isLoading, totalJobs] as const
 }
 
 
