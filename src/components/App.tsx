@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Background from "./Background";
 import { Container } from "./Container";
 import Footer from "./Footer";
@@ -16,11 +16,19 @@ import { useJobsItems } from "../hooks/hooks";
 
 function App() {
   const [searchText, setSearchText] = useState("");
+  const [debouncedSearchText, setDebouncedSearchText] = useState("");
+
   const {
     jobsSubList: jobsItems,
     isLoading,
     totalJobs,
-  } = useJobsItems(searchText);
+  } = useJobsItems(debouncedSearchText);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setDebouncedSearchText(searchText);
+    }, 500);
+  }, [searchText]);
 
   return (
     <>
