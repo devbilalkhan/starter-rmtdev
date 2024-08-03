@@ -1,21 +1,18 @@
-
 import BookmarkIcon from "./BookmarkIcon";
 import Spinner from "./Spinner";
-import { useJobItem } from "../hooks/hooks";
+import { useActiveId, useJobItem } from "../hooks/hooks";
 
+export default function JobItemContent() {
+  const activeId = useActiveId();
+  const [jobItem, isLoading] = useJobItem(activeId);
 
-type JobItemContentProps = {
-  activeId: number | null;
-};
+  if (!jobItem) return <EmptyJobContent />;
 
-
-export default function JobItemContent({ activeId }: JobItemContentProps) {
-  const [jobItem, isLoading ] = useJobItem(activeId)
   return (
     <>
-      {!activeId && <EmptyJobContent />}
-      {activeId && isLoading && <Spinner />}
-      {activeId && !isLoading && (
+      {isLoading ? (
+        <Spinner />
+      ) : (
         <section className="job-details">
           <div>
             <img
@@ -71,11 +68,12 @@ export default function JobItemContent({ activeId }: JobItemContentProps) {
                   </p>
                 </div>
                 <ul className="qualifications__list">
-                {jobItem.qualifications.map(qualification =>(
-                <li key={qualification} className="qualifications__item">{qualification}</li>
-                ))}
-              
-              </ul> 
+                  {jobItem.qualifications?.map((qualification) => (
+                    <li key={qualification} className="qualifications__item">
+                      {qualification}
+                    </li>
+                  ))}
+                </ul>
               </section>
 
               <section className="reviews">
@@ -86,10 +84,11 @@ export default function JobItemContent({ activeId }: JobItemContentProps) {
                   </p>
                 </div>
                 <ul className="reviews__list">
-                  <li className="reviews__item">
-                    Nice building and food also.
-                  </li>
-                  <li className="reviews__item">Great working experience.</li>
+                  {jobItem.reviews?.map((review, idx) => (
+                    <li className="reviews__item" key={idx}>
+                      {review}
+                    </li>
+                  ))}
                 </ul>
               </section>
             </div>

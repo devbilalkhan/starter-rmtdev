@@ -56,7 +56,7 @@ export function useActiveId() {
 
 
 export function useJobItem(activeId: number | null) {
-  const [job, setJob] = useState<JobItemType>({});
+  const [job, setJob] = useState<JobItemType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function useJobItem(activeId: number | null) {
         const response = await fetch(`${BASE_API_URL}/${activeId}`);
         if (!response.ok) throw new Error();
         const data = await response.json();
-        console.log(data);
+   
         setJob(data.jobItem as JobItemType);
       } catch (err) {
         console.log("something went wrong");
