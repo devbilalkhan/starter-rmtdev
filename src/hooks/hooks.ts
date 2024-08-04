@@ -7,15 +7,16 @@ type idT = number | null;
 
 const fetchJobItem = async (id: number): Promise<JobItemType> => {
   const response = await fetch(`${BASE_API_URL}/${id}`);
-  if (!response.ok) throw new Error("Something went wrong while fetching job item");
+  if (!response.ok)
+    throw new Error("Something went wrong while fetching job item");
   const data = await response.json();
-  const jobItem = data?.jobItem;  
-  return jobItem ;
+  const jobItem = data?.jobItem;
+  return jobItem;
 };
 
 export function useJobItem(id: idT) {
   const { data, isInitialLoading } = useQuery(
-    ["job-item", id],    
+    ["job-item", id],
     ({ queryKey }: QueryFunctionContext<[string, idT]>) => {
       const [, id] = queryKey;
       return id ? fetchJobItem(id) : null;
@@ -25,7 +26,9 @@ export function useJobItem(id: idT) {
       refetchOnWindowFocus: false,
       retry: false,
       enabled: !!id, // fetch only when there is an id otherwise dont fetch when mount
-      onError: (err) => {console.error(err);},
+      onError: (err) => {
+        console.error(err);
+      },
     }
   );
 
@@ -45,34 +48,30 @@ export function useDebounce<T>(debouncedValue: T, delay: number = 1000): T {
   return debouncedSearchText;
 }
 
+const fetchJobItems = async (text: string): Promise<JobItemType[]> => {
+  const response = await fetch(`${BASE_API_URL}?search=${text}`);
+  if (!response.ok) throw new Error();
+  const data = await response.json();
+  if (!data || !data.jobItems)
+    throw new Error("Could not find the search results");
+  return data?.jobItems;
+};
+
 export function useJobsItems(searchText: string) {
-  const [jobItems, setJobItems] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const jobsSubList = jobItems.slice(0, 7);
-
-  const totalJobs = jobItems.length;
-
-  useEffect(() => {
-    if (!searchText) return;
-    const fetchJobsList = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${BASE_API_URL}?search=${searchText}`);
-
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-
-        setJobItems(data.jobItems);
-      } catch (err) {
-        console.error("Something went wrong in fetching jobs list.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchJobsList();
-  }, [searchText]);
-  return { jobsSubList, isLoading, totalJobs } as const;
+  const { data, isInitialLoading } = useQuery(
+    ["job-items", searchText],
+    () => fetchJobItems(searchText),
+    {
+      staleTime: 1000 * 60 * 60,
+      retry: false,
+      enabled: !!searchText,
+      refetchOnWindowFocus: false,
+      onError: (err) => console.log(err),
+    }
+  );
+  return { data, isInitialLoading } as const;
 }
+
 
 export function useActiveId() {
   const [activeId, setActiveId] = useState<number | null>(null);
