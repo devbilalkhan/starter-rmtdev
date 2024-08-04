@@ -2,22 +2,33 @@ import { useState, useEffect } from "react";
 import { Job, JobItemType } from "../lib/type";
 import { BASE_API_URL } from "../lib/constants";
 
-export function useJobsItems(searchText:string){
+export function useDebounce<T>(debouncedValue
+  : T, delay:number = 1000):T {
+  const [debouncedSearchText, setDebouncedSearchText] = useState<T>(debouncedValue);
+ 
+  useEffect(() => {
+   const timerId = setTimeout(() => {
+      setDebouncedSearchText(debouncedValue);
+    }, delay);
+  return () => clearTimeout(timerId)
+  }, [debouncedValue
+    , delay]);
+  return debouncedSearchText
+}
 
+export function useJobsItems(searchText: string) {
   const [jobItems, setJobItems] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const jobsSubList = jobItems.slice(0, 7);
 
-  const totalJobs = jobItems.length
+  const totalJobs = jobItems.length;
 
   useEffect(() => {
     if (!searchText) return;
     const fetchJobsList = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `${BASE_API_URL}?search=${searchText}`
-        );
+        const response = await fetch(`${BASE_API_URL}?search=${searchText}`);
 
         if (!response.ok) throw new Error();
         const data = await response.json();
@@ -31,9 +42,8 @@ export function useJobsItems(searchText:string){
     };
     fetchJobsList();
   }, [searchText]);
-  return {jobsSubList, isLoading, totalJobs} as const
+  return { jobsSubList, isLoading, totalJobs } as const;
 }
-
 
 export function useActiveId() {
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -53,9 +63,8 @@ export function useActiveId() {
     };
   }, []);
 
-  return activeId
+  return activeId;
 }
-
 
 export function useJobItem(activeId: number | null) {
   const [job, setJob] = useState<JobItemType | null>(null);
@@ -69,7 +78,7 @@ export function useJobItem(activeId: number | null) {
         const response = await fetch(`${BASE_API_URL}/${activeId}`);
         if (!response.ok) throw new Error();
         const data = await response.json();
-   
+
         setJob(data.jobItem as JobItemType);
       } catch (err) {
         console.log("something went wrong");
@@ -80,5 +89,5 @@ export function useJobItem(activeId: number | null) {
     fetchJobDetails();
   }, [activeId]);
 
-  return [job, isLoading] as const
+  return [job, isLoading] as const;
 }
