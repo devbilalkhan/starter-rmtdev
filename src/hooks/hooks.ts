@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { JobItemType } from "../lib/type";
 import { BASE_API_URL } from "../lib/constants";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { handleError } from "../lib/utils";
 
 type idT = number | null;
 
@@ -27,9 +27,7 @@ export function useJobItem(id: idT) {
       refetchOnWindowFocus: false,
       retry: false,
       enabled: !!id, // fetch only when there is an id otherwise dont fetch when mount
-      onError: (err) => {
-        console.error(err);
-      },
+      onError: handleError
     }
   );
 
@@ -70,17 +68,7 @@ export function useJobsItems(searchText: string) {
       retry: false,
       enabled: !!searchText,
       refetchOnWindowFocus: false,
-      onError: (err) => {
-        let message: string
-        if (err instanceof Error) {
-          message = err.message;
-        } else if (typeof err === "string") {
-          message = err
-        } else {
-          message = "An error occurred"
-        }
-        toast.error(message);
-      },
+      onError: handleError
     }
   );
   return { data, isInitialLoading } as const;
