@@ -4,7 +4,7 @@ import { useActiveId, useJobItem } from "../hooks/hooks";
 
 export default function JobItemContent() {
   const activeId = useActiveId();
-  const { data: jobItem, isLoading } = useJobItem(activeId);
+  const { data: jobItem, isInitialLoading: isLoading } = useJobItem(activeId);
 
   if (isLoading) {
     return <Loading />;
