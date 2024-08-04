@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Job, JobItemType } from "../lib/type";
+import { JobItemType } from "../lib/type";
 import { BASE_API_URL } from "../lib/constants";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 type idT = number | null;
 
@@ -50,7 +51,10 @@ export function useDebounce<T>(debouncedValue: T, delay: number = 1000): T {
 
 const fetchJobItems = async (text: string): Promise<JobItemType[]> => {
   const response = await fetch(`${BASE_API_URL}?search=${text}`);
-  if (!response.ok) throw new Error();
+  if (!response.ok) {
+    const errMsg = await response.json();
+    throw new Error(errMsg.description);
+  }
   const data = await response.json();
   if (!data || !data.jobItems)
     throw new Error("Could not find the search results");
@@ -66,12 +70,21 @@ export function useJobsItems(searchText: string) {
       retry: false,
       enabled: !!searchText,
       refetchOnWindowFocus: false,
-      onError: (err) => console.log(err),
+      onError: (err) => {
+        let message: string
+        if (err instanceof Error) {
+          message = err.message;
+        } else if (typeof err === "string") {
+          message = err
+        } else {
+          message = "An error occurred"
+        }
+        toast.error(message);
+      },
     }
   );
   return { data, isInitialLoading } as const;
 }
-
 
 export function useActiveId() {
   const [activeId, setActiveId] = useState<number | null>(null);
