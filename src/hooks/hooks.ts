@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Job, JobItemType } from "../lib/type";
 import { BASE_API_URL } from "../lib/constants";
+import { useQuery } from "@tanstack/react-query";
 
 export function useDebounce<T>(debouncedValue
   : T, delay:number = 1000):T {
@@ -66,28 +67,48 @@ export function useActiveId() {
   return activeId;
 }
 
-export function useJobItem(activeId: number | null) {
-  const [job, setJob] = useState<JobItemType | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+// export function useJobItem(id: number | null) {
+//   const [job, setJob] = useState<JobItemType | null>(null);
+//   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!activeId) return;
-    setIsLoading(true);
-    const fetchJobDetails = async () => {
-      try {
-        const response = await fetch(`${BASE_API_URL}/${activeId}`);
+//   useEffect(() => {
+//     if (!id) return;
+//     setIsLoading(true);
+//     const fetchJobDetails = async () => {
+//       try {
+//         const response = await fetch(`${BASE_API_URL}/${id}`);
+//         if (!response.ok) throw new Error();
+//         const data = await response.json();
+
+//         setJob(data.jobItem as JobItemType);
+//       } catch (err) {
+//         console.log("something went wrong");
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+//     fetchJobDetails();
+//   }, [id]);
+
+//   return [job, isLoading] as const;
+// }
+
+export function useJobItem(id: number | null){
+    const {data, isLoading} = useQuery(['job-item', id], 
+      async () => {
+        const response = await fetch(`${BASE_API_URL}/${id}`);
         if (!response.ok) throw new Error();
         const data = await response.json();
-
-        setJob(data.jobItem as JobItemType);
-      } catch (err) {
-        console.log("something went wrong");
-      } finally {
-        setIsLoading(false);
+        return data.jobItem as JobItemType
+      },
+      {
+        staleTime: 1000 * 60 * 60,
+        refetchOnWindowFocus: false,
+        retry: false,
+        enabled: !!id, // fetch only when there is an id otherwise dont fetch when mount
+        onError: () => {},
       }
-    };
-    fetchJobDetails();
-  }, [activeId]);
-
-  return [job, isLoading] as const;
+    )
+    
+    return {data , isLoading} as const
 }
