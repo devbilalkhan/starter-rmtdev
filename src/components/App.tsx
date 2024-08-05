@@ -15,7 +15,7 @@ import PaginationControls from "./PaginationControls";
 import { useDebounce, useJobsItems } from "../hooks/hooks";
 import { Toaster } from "react-hot-toast";
 import { RESULTS_PER_PAGE } from "../lib/constants";
-import { TSortBy } from "../lib/type";
+import { TPageDirection, TSortBy } from "../lib/type";
 
 function App() {
   const [searchText, setSearchText] = useState("");
@@ -26,7 +26,7 @@ function App() {
   const [currentPage, setCurentPage] = useState(1);
   const [sortBy, setSortBy] = useState<TSortBy>("relevance");
 
-  const jobItemSorted = jobItems?.sort((a, b) => {
+  const jobItemSorted = [...(jobItems || [])].sort((a, b) => {
     if (sortBy === "relevance") return b.relevanceScore - a.relevanceScore;
     if (sortBy === "recent") return a.daysAgo - b.daysAgo;
     return 0;
@@ -34,7 +34,7 @@ function App() {
 
   const totalJobs = jobItems ? jobItems.length : 0;
   const jobItemsSliced = jobItemSorted
-    ? jobItemSorted?.slice(
+    ? jobItemSorted.slice(
         currentPage * RESULTS_PER_PAGE - RESULTS_PER_PAGE,
         currentPage * RESULTS_PER_PAGE
       )
@@ -46,7 +46,7 @@ function App() {
     setSortBy(sortByValue);
   };
 
-  const handlePagination = (direction: "next" | "previous") => {
+  const handlePagination = (direction: TPageDirection) => {
     if (direction === "next") {
       setCurentPage((prev) => prev + 1);
     }
