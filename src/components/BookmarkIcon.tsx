@@ -8,8 +8,6 @@ type BookmarkIconProps = {
 export default function BookmarkIcon({ id }: BookmarkIconProps) {
   const { bookmarkedIds, handleToggleBookmarkBtn } = useBookmarksContext();
 
-
-  
   return (
     <button
       onClick={(e) => {

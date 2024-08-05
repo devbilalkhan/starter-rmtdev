@@ -1,28 +1,32 @@
-import React, { createContext, useEffect, useState } from "react";
-
-export type BookmarkContentDefaultType = {
-  bookmarkedIds: number[];
-  handleToggleBookmarkBtn: (id: number) => void;
-};
+import { createContext } from "react";
+import useLocalStorage from "../hooks/LocalStorageHook";
+import { BookmarkContentDefaultType, BookmarksContextProps } from "../lib/type";
+import { useJobItems } from "../hooks/hooks";
 
 export const BookmarkContext = createContext<BookmarkContentDefaultType>({
   bookmarkedIds: [],
   handleToggleBookmarkBtn: () => {},
+  bookmarkedJobItems: [],
+  isLoading: false,
 });
 
-type BookmarksContextProps = {
-  children: React.ReactNode;
-};
-
+/**
+ * Provides context for managing bookmarked job IDs using local storage.
+ *
+ */
 export const BookmarksContextProvider = ({
   children,
 }: BookmarksContextProps) => {
-  const bookmarkedIdsLocalStorage = JSON.parse(
-    localStorage.getItem("bookmarked-job-items") || "[]"
+  const [bookmarkedIds, setBookmarkedIds] = useLocalStorage<number[]>(
+    "bookmarked-job-ids",
+    []
   );
-  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>(
-    () => bookmarkedIdsLocalStorage || []
-  );
+
+  const { jobItems: bookmarkedJobItems, isLoading } =
+    useJobItems(bookmarkedIds);
+
+  console.log(bookmarkedJobItems, isLoading);
+
   const handleToggleBookmarkBtn = (id: number) => {
     if (bookmarkedIds.includes(id)) {
       setBookmarkedIds((prev) => prev.filter((prevId) => prevId !== id));
@@ -31,13 +35,14 @@ export const BookmarksContextProvider = ({
     }
   };
 
-  useEffect(() => {
-    localStorage.setItem("bookmarked-job-items", JSON.stringify(bookmarkedIds));
-  }, [bookmarkedIds]);
-
   return (
     <BookmarkContext.Provider
-      value={{ bookmarkedIds: bookmarkedIds, handleToggleBookmarkBtn }}
+      value={{
+        bookmarkedIds: bookmarkedIds,
+        handleToggleBookmarkBtn,
+        bookmarkedJobItems,
+        isLoading,
+      }}
     >
       {children}
     </BookmarkContext.Provider>

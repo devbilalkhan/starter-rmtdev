@@ -20,3 +20,15 @@ export type JobItemType = Job & {
 
 export type TSortBy = "relevance" | "recent";
 export type TPageDirection = "previous" | "next";
+
+
+export type BookmarkContentDefaultType = {
+  bookmarkedIds: number[];
+  handleToggleBookmarkBtn: (id: number) => void;
+  bookmarkedJobItems: JobItemType[];
+  isLoading: boolean;
+};
+
+export type BookmarksContextProps = {
+  children: React.ReactNode;
+};

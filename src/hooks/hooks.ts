@@ -1,10 +1,36 @@
 import { useState, useEffect } from "react";
 import { JobItemType } from "../lib/type";
 import { BASE_API_URL } from "../lib/constants";
-import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
+import {
+  QueryFunctionContext,
+  useQueries,
+  useQuery,
+} from "@tanstack/react-query";
 import { handleError } from "../lib/utils";
 
 type idT = number | null;
+
+export function useJobItems(ids: number[]) {
+  const results = useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ["job-item", id],
+      queryFn: () => fetchJobItem(id),
+      staleTime: 1000 * 60 * 60,
+      refetchOnWindowFocus: false,
+      retry: false,
+      enabled: !!id,
+      onError: handleError,
+    })),
+  });
+  
+  const jobItems = results
+    ?.map((result) => result.data)
+    .filter((item) => item !== undefined);
+
+  const isLoading = results.some(result => result.isLoading)
+
+  return {jobItems, isLoading};
+}
 
 const fetchJobItem = async (id: number): Promise<JobItemType> => {
   const response = await fetch(`${BASE_API_URL}/${id}`);
@@ -27,7 +53,7 @@ export function useJobItem(id: idT) {
       refetchOnWindowFocus: false,
       retry: false,
       enabled: !!id, // fetch only when there is an id otherwise dont fetch when mount
-      onError: handleError
+      onError: handleError,
     }
   );
 
@@ -59,7 +85,7 @@ const fetchJobItems = async (text: string): Promise<JobItemType[]> => {
   return data?.jobItems;
 };
 
-export function useJobsItems(searchText: string) {
+export function useSearchQuery(searchText: string) {
   const { data, isInitialLoading } = useQuery(
     ["job-items", searchText],
     () => fetchJobItems(searchText),
@@ -68,7 +94,7 @@ export function useJobsItems(searchText: string) {
       retry: false,
       enabled: !!searchText,
       refetchOnWindowFocus: false,
-      onError: handleError
+      onError: handleError,
     }
   );
   return { data, isInitialLoading } as const;
