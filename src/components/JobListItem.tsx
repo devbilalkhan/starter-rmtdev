@@ -19,7 +19,7 @@ export default function JobListItem({
           <p className="job-item__company">{company}</p>
         </div>
         <div className="job-item__right">
-          <BookmarkIcon />
+          <BookmarkIcon id={id} />
           <time className="job-item__time">{daysAgo} d</time>
         </div>
       </a>

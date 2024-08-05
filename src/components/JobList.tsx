@@ -8,15 +8,24 @@ type JobListProps = {
   isLoading: boolean;
 };
 
-export function JobList({ jobsItems, isLoading }: JobListProps) {
-  const activeId = useActiveId()
+export function JobList({
+  jobsItems,
+  isLoading,
+  
+}: JobListProps) {
+  const activeId = useActiveId();
   return (
     <ul className="job-list">
       {isLoading ? (
         <Spinner />
       ) : (
         jobsItems.map((jobItem) => (
-          <JobListItem key={jobItem.id} job={jobItem} isActive={jobItem.id === activeId} />
+          <JobListItem
+            key={jobItem.id}
+            job={jobItem}
+            isActive={jobItem.id === activeId}
+           
+          />
         ))
       )}
     </ul>
