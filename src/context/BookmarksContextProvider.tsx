@@ -25,8 +25,6 @@ export const BookmarksContextProvider = ({
   const { jobItems: bookmarkedJobItems, isLoading } =
     useJobItems(bookmarkedIds);
 
-  console.log(bookmarkedJobItems, isLoading);
-
   const handleToggleBookmarkBtn = (id: number) => {
     if (bookmarkedIds.includes(id)) {
       setBookmarkedIds((prev) => prev.filter((prevId) => prevId !== id));
