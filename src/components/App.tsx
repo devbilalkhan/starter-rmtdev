@@ -12,49 +12,9 @@ import ResultsCount from "./ResultsCount";
 import SortingControl from "./SortingControls";
 import JobList from "./JobList";
 import PaginationControls from "./PaginationControls";
-import { useSearchQuery } from "../hooks/hooks";
 import { Toaster } from "react-hot-toast";
-import { RESULTS_PER_PAGE } from "../lib/constants";
-import { TPageDirection, TSortBy } from "../lib/type";
-import useSearchTextContext from "../hooks/searchTextHook";
 
 function App() {
-  const { debouncedSearchText } = useSearchTextContext();
-  const { data: jobItems, isInitialLoading: isLoading } =
-    useSearchQuery(debouncedSearchText);
-
-  const [currentPage, setCurentPage] = useState(1);
-  const [sortBy, setSortBy] = useState<TSortBy>("relevance");
-
-  const jobItemSorted = [...(jobItems || [])].sort((a, b) => {
-    if (sortBy === "relevance") return b.relevanceScore - a.relevanceScore;
-    if (sortBy === "recent") return a.daysAgo - b.daysAgo;
-    return 0;
-  });
-
-  const totalJobs = jobItems ? jobItems.length : 0;
-  const jobItemsSliced = jobItemSorted
-    ? jobItemSorted.slice(
-        currentPage * RESULTS_PER_PAGE - RESULTS_PER_PAGE,
-        currentPage * RESULTS_PER_PAGE
-      )
-    : [];
-
-  const totalPages = totalJobs / RESULTS_PER_PAGE;
-
-  const handleSorting = (sortByValue: TSortBy) => {
-    setSortBy(sortByValue);
-  };
-
-  const handlePagination = (direction: TPageDirection) => {
-    if (direction === "next") {
-      setCurentPage((prev) => prev + 1);
-    }
-    if (direction === "previous") {
-      setCurentPage((prev) => prev - 1);
-    }
-  };
-
   return (
     <>
       <Background />
@@ -68,15 +28,11 @@ function App() {
       <Container>
         <Sidebar>
           <SidebarTop>
-            <ResultsCount totalJobs={totalJobs} />
-            <SortingControl handleSorting={handleSorting} sortBy={sortBy} />
+            <ResultsCount />
+            <SortingControl />
           </SidebarTop>
-          <JobList jobsItems={jobItemsSliced} isLoading={isLoading} />
-          <PaginationControls
-            onClick={handlePagination}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
+          <JobList />
+          <PaginationControls />
         </Sidebar>
         <JobItemContent />
       </Container>

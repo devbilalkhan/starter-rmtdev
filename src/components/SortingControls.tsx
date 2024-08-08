@@ -1,3 +1,4 @@
+import useJobItemContext from "../hooks/jobItemHooks";
 import { TSortBy } from "../lib/type";
 
 type SortingControlProps = {
@@ -6,13 +7,11 @@ type SortingControlProps = {
 };
 
 type SortingButtonProps = SortingControlProps & {
-  sortingType: string;
+  sortingType: TSortBy;
 };
 
-export default function SortingControl({
-  handleSorting,
-  sortBy,
-}: SortingControlProps) {
+export default function SortingControl() {
+  const { handleSorting, sortBy } = useJobItemContext();
   return (
     <section className="sorting">
       <i className="fa-solid fa-arrow-down-short-wide"></i>
