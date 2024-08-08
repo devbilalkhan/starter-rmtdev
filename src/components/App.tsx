@@ -13,6 +13,7 @@ import SortingControl from "./SortingControls";
 import JobList from "./JobList";
 import PaginationControls from "./PaginationControls";
 import { Toaster } from "react-hot-toast";
+import JobSearchList from "./JobSearchList";
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
             <ResultsCount />
             <SortingControl />
           </SidebarTop>
-          <JobList />
+          <JobSearchList />
           <PaginationControls />
         </Sidebar>
         <JobItemContent />

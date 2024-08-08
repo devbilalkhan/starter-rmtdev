@@ -8,7 +8,7 @@ const BookmarksPopover = forwardRef<HTMLDivElement>(function (_, ref) {
 
   return createPortal(
     <div ref={ref} className="bookmarks-popover">
-      <JobList isLoading={isLoading} jobsItems={bookmarkedJobItems} />
+      <JobList jobItems={bookmarkedJobItems} isLoading={isLoading} />
     </div>,
     document.body
   );
