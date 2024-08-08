@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useMemo, useState } from "react";
 import useSearchTextContext from "../hooks/searchTextHook";
 import { useSearchQuery } from "../hooks/hooks";
 import { TSortBy, TPageDirection, JobItemType, Job } from "../lib/type";
@@ -31,19 +31,25 @@ export function JobItemContentProvider({
   const [currentPage, setCurentPage] = useState(1);
   const [sortBy, setSortBy] = useState<TSortBy>("relevance");
 
-  const jobItemSorted = [...(jobItems || [])].sort((a, b) => {
-    if (sortBy === "relevance") return b.relevanceScore - a.relevanceScore;
-    if (sortBy === "recent") return a.daysAgo - b.daysAgo;
-    return 0;
-  });
+  const jobItemSorted = useMemo(
+    () =>
+      [...(jobItems || [])].sort((a, b) => {
+        if (sortBy === "relevance") return b.relevanceScore - a.relevanceScore;
+        if (sortBy === "recent") return a.daysAgo - b.daysAgo;
+        return 0;
+      }),
+    [jobItems, sortBy]
+  );
 
-  const totalJobs = jobItems ? jobItems.length : 0;
-  const jobItemsSliced = jobItemSorted
-    ? jobItemSorted.slice(
-        currentPage * RESULTS_PER_PAGE - RESULTS_PER_PAGE,
-        currentPage * RESULTS_PER_PAGE
-      )
-    : [];
+  const totalJobs = useMemo(() => (jobItems ? jobItems.length : 0), [jobItems]);
+  
+  const jobItemsSliced = useMemo(() => {
+    if (!jobItemSorted) return [];
+    return jobItemSorted.slice(
+      currentPage * RESULTS_PER_PAGE - RESULTS_PER_PAGE,
+      currentPage * RESULTS_PER_PAGE
+    );
+  }, [jobItemSorted, currentPage]);
 
   const totalPages = totalJobs / RESULTS_PER_PAGE;
 
