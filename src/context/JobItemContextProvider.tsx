@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useState } from "react";
+import React, { createContext, useCallback, useMemo, useState } from "react";
 import useSearchTextContext from "../hooks/searchTextHook";
 import { useSearchQuery } from "../hooks/hooks";
 import { TSortBy, TPageDirection, JobItemType, Job } from "../lib/type";
@@ -42,7 +42,7 @@ export function JobItemContentProvider({
   );
 
   const totalJobs = useMemo(() => (jobItems ? jobItems.length : 0), [jobItems]);
-  
+
   const jobItemsSliced = useMemo(() => {
     if (!jobItemSorted) return [];
     return jobItemSorted.slice(
@@ -53,34 +53,46 @@ export function JobItemContentProvider({
 
   const totalPages = totalJobs / RESULTS_PER_PAGE;
 
-  const handleSorting = (sortByValue: TSortBy) => {
+  const handleSorting = useCallback((sortByValue: TSortBy) => {
     setSortBy(sortByValue);
-  };
+  }, []);
 
-  const handlePagination = (direction: TPageDirection) => {
+  const handlePagination = useCallback((direction: TPageDirection) => {
     if (direction === "next") {
       setCurentPage((prev) => prev + 1);
     }
     if (direction === "previous") {
       setCurentPage((prev) => prev - 1);
     }
-  };
-
+  }, []);
+  const context = useMemo(
+    () => ({
+      handlePagination,
+      handleSorting,
+      totalPages,
+      jobItemSorted,
+      jobItemsSliced,
+      isLoading,
+      totalJobs,
+      sortBy,
+      jobItems,
+      currentPage,
+    }),
+    [
+      currentPage,
+      isLoading,
+      jobItemSorted,
+      jobItems,
+      jobItemsSliced,
+      sortBy,
+      totalJobs,
+      totalPages,
+      handlePagination,
+      handleSorting,
+    ]
+  );
   return (
-    <JobItemContext.Provider
-      value={{
-        handlePagination,
-        handleSorting,
-        totalPages,
-        jobItemSorted,
-        jobItemsSliced,
-        isLoading,
-        totalJobs,
-        sortBy,
-        jobItems,
-        currentPage,
-      }}
-    >
+    <JobItemContext.Provider value={context}>
       {children}
     </JobItemContext.Provider>
   );
